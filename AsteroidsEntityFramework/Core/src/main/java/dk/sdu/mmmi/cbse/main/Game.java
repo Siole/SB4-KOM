@@ -10,9 +10,10 @@ import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
 import dk.sdu.mmmi.cbse.common.services.IGamePluginService;
+import dk.sdu.mmmi.cbse.common.services.IPostEntityProcessingService;
+import dk.sdu.mmmi.cbse.common.util.SPIAsteroidsLocator;
 import dk.sdu.mmmi.cbse.managers.GameInputProcessor;
-import dk.sdu.mmmi.cbse.playersystem.PlayerControlSystem;
-import dk.sdu.mmmi.cbse.playersystem.PlayerPlugin;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,8 @@ public class Game
     private final GameData gameData = new GameData();
     private List<IEntityProcessingService> entityProcessors = new ArrayList<>();
     private List<IGamePluginService> entityPlugins = new ArrayList<>();
+
+    private List<IPostEntityProcessingService> postEntityProcessors = new ArrayList<>();
     private World world = new World();
 
     @Override
@@ -43,15 +46,35 @@ public class Game
                 new GameInputProcessor(gameData)
         );
 
+        /*
+        Code for DataOriented Game Development
         IGamePluginService playerPlugin = new PlayerPlugin();
+        IGamePluginService enemyPlugin = new EnemyPlugin();
+        IGamePluginService asteroidPlugin = new AsteroidPlugin();
 
         IEntityProcessingService playerProcess = new PlayerControlSystem();
         entityPlugins.add(playerPlugin);
         entityProcessors.add(playerProcess);
+        //Enemy
+        IEntityProcessingService enemyProcess = new EnemyControlSystem();
+        entityPlugins.add(enemyPlugin);
+        entityProcessors.add(enemyProcess);
+        //Asteroid
+        IEntityProcessingService asteroidProcess = new AsteroidControlSystem();
+        entityPlugins.add(asteroidPlugin);
+        entityProcessors.add(asteroidProcess);
+
         // Lookup all Game Plugins using ServiceLoader
         for (IGamePluginService iGamePlugin : entityPlugins) {
             iGamePlugin.start(gameData, world);
         }
+        */
+
+        // Lookup all Game Plugins using ServiceLocator
+        for (IGamePluginService iGamePlugin : SPIAsteroidsLocator.locate(IGamePluginService.class)) {
+            iGamePlugin.start(gameData, world);
+        }
+
     }
 
     @Override
@@ -71,10 +94,23 @@ public class Game
     }
 
     private void update() {
-        // Update
+
+        for (IEntityProcessingService entityProcessingService : SPIAsteroidsLocator.locate(IEntityProcessingService.class)){
+            entityProcessingService.process(gameData, world);
+        }
+
+        for (IPostEntityProcessingService entityPostProcessingService : SPIAsteroidsLocator.locate(IPostEntityProcessingService.class)){
+            entityPostProcessingService.process(gameData, world);
+        }
+
+        /*
+        // Update DataOriented game design
         for (IEntityProcessingService entityProcessorService : entityProcessors) {
             entityProcessorService.process(gameData, world);
         }
+
+        for (IPostEntityProcessingService entityPostProcessorService : postEntityProcessors) {
+            entityPostProcessorService.process(gameData, world);}*/
     }
 
     private void draw() {
