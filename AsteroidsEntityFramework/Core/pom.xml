@@ -46,8 +46,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>Enemy</artifactId>
+            <groupId>dk.sdu.mmmi.cbse</groupId>
+            <artifactId>CommonBullet</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -56,6 +56,7 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Collision</artifactId>
