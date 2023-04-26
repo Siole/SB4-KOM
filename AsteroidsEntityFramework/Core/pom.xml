@@ -22,8 +22,8 @@
             <name>GitHub sweat-tek Apache Maven Packages</name>
             <url>https://maven.pkg.github.com/sweat-tek/ShadedLibGDX</url>
         </repository>
-
     </repositories>
+
     <dependencies>
         <dependency>
             <groupId>dk.sdu.mmmi.cbse</groupId>
@@ -46,8 +46,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>Enemy</artifactId>
+            <groupId>dk.sdu.mmmi.cbse</groupId>
+            <artifactId>CommonBullet</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -56,6 +56,7 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Collision</artifactId>
@@ -66,10 +67,46 @@
             <artifactId>gdx-backend-lwjgl</artifactId>
             <version>1.11.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>6.0.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>6.0.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>6.0.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>6.0.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+            <version>6.0.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>6.0.7</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>3.3.0</version>
                 <executions>
@@ -80,7 +117,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>shadedlibgdx</includeArtifactIds>
+                            <includeArtifactIds>shadedlibgdx,spring-context,spring-core,spring-beans,spring-aop,spring-expression,commons-logging</includeArtifactIds>
                             <outputDirectory>../mods-mvn</outputDirectory>
                         </configuration>
                     </execution>

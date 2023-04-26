@@ -12,21 +12,31 @@ import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
 import dk.sdu.mmmi.cbse.common.services.IGamePluginService;
 import dk.sdu.mmmi.cbse.common.services.IPostEntityProcessingService;
 import dk.sdu.mmmi.cbse.managers.GameInputProcessor;
+import org.springframework.context.annotation.Configuration;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ServiceLoader;
 import static java.util.stream.Collectors.toList;
-
+@Configuration
 public class Game implements ApplicationListener {
 
     private static OrthographicCamera cam;
     private ShapeRenderer sr;
 
     private final GameData gameData = new GameData();
-    private List<IEntityProcessingService> entityProcessors = new ArrayList<>();
-    private List<IPostEntityProcessingService> postEntityProcessors = new ArrayList<>();
+
+    private final List<IGamePluginService> gamePluginServices;
+    private List<IEntityProcessingService> entityProcessors;
+    private List<IPostEntityProcessingService> postEntityProcessors;
     private World world = new World();
+
+    public Game(List<IGamePluginService> gamePluginServices, List<IEntityProcessingService> entityProcessors, List<IPostEntityProcessingService> postEntityProcessors) {
+        this.gamePluginServices = gamePluginServices;
+        this.entityProcessors = entityProcessors;
+        this.postEntityProcessors = postEntityProcessors;
+    }
 
     @Override
     public void create() {
@@ -44,10 +54,15 @@ public class Game implements ApplicationListener {
                 new GameInputProcessor(gameData)
         );
 
-        // Lookup all Game Plugins using ServiceLoader
+        // using Spring
+        for (IGamePluginService gamePlugin : gamePluginServices) {
+            gamePlugin.start(gameData, world);
+        }
+
+        /* Lookup all Game Plugins using ServiceLoader
         for (IGamePluginService iGamePlugin : getPluginServices()) {
             iGamePlugin.start(gameData, world);
-        }
+        }*/
     }
 
     @Override
@@ -68,12 +83,22 @@ public class Game implements ApplicationListener {
 
     private void update() {
         // Update
+        //Using Spring
+        for (IEntityProcessingService entityProcessor : entityProcessors) {
+            entityProcessor.process(gameData, world);
+        }
+
+        for (IPostEntityProcessingService postEntityProcessor : postEntityProcessors) {
+            postEntityProcessor.process(gameData, world);
+        }
+
+        /* Using JMS
         for (IEntityProcessingService entityProcessorService : getEntityProcessingServices()) {
             entityProcessorService.process(gameData, world);
         }
         for (IPostEntityProcessingService postEntityProcessorService : getPostEntityProcessingServices()) {
             postEntityProcessorService.process(gameData, world);
-        }
+        }*/
     }
 
     private void draw() {
@@ -113,6 +138,7 @@ public class Game implements ApplicationListener {
     public void dispose() {
     }
 
+    /*
     private Collection<? extends IGamePluginService> getPluginServices() {
         return ServiceLoader.load(IGamePluginService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
     }
@@ -124,4 +150,6 @@ public class Game implements ApplicationListener {
     private Collection<? extends IPostEntityProcessingService> getPostEntityProcessingServices() {
         return ServiceLoader.load(IPostEntityProcessingService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
     }
+     */
+
 }
